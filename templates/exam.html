@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}模拟考试 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}模拟考试 - {{ exam_type }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>{{ exam_type }} - 模拟考试</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" action="{{ url_for('exam_submit') }}">
+            {% for q in questions %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h6>
+                        <span class="badge bg-secondary">{{ loop.index }}</span>
+                        {{ q.content }}
+                    </h6>
+
+                    {% if q.options %}
+                    <div class="ms-3">
+                        {% for opt in q.options %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="{{ 'radio' if q.question_type != 'multi' else 'checkbox' }}"
+                                   name="{{ q.id }}" value="{{ loop.index0 }}" id="q{{ q.id }}_opt{{ loop.index0 }}">
+                            <label class="form-check-label" for="q{{ q.id }}_opt{{ loop.index0 }}">
+                                {{ ['A', 'B', 'C', 'D', 'E', 'F'][loop.index0] }}. {{ opt }}
+                            </label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="ms-3">
+                        <input type="text" class="form-control" name="{{ q.id }}" placeholder="请输入答案">
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">提交试卷</button>
+                <a href="{{ url_for('practice') }}" class="btn btn-outline-secondary btn-lg ms-2">返回</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

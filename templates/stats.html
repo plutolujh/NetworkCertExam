@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}学习统计 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}学习统计{% endblock %}
+
+{% block content %}
+<!-- 总览统计 -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #4361ee, #4cc9f0);">
+                <i class="bi bi-journal-text text-white"></i>
+            </div>
+            <div class="stat-number">{{ total }}</div>
+            <div class="text-muted">总题目数</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                <i class="bi bi-check-circle text-white"></i>
+            </div>
+            <div class="stat-number text-success">{{ mastery_stats.review if mastery_stats else 0 }}</div>
+            <div class="text-muted">已掌握</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                <i class="bi bi-book text-white"></i>
+            </div>
+            <div class="stat-number text-warning">{{ mastery_stats.learning if mastery_stats else 0 }}</div>
+            <div class="text-muted">学习中</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card h-100">
+            <div class="stat-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">
+                <i class="bi bi-graph-up-arrow text-white"></i>
+            </div>
+            <div class="stat-number" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa); -webkit-background-clip: text;">{{ correct_rate }}%</div>
+            <div class="text-muted">正确率</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- 按类型统计 -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-pie-chart text-primary me-2 fs-5"></i>
+                <h5 class="mb-0">题目类型分布</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="typeChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- 掌握程度 -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-bar-chart text-success me-2 fs-5"></i>
+                <h5 class="mb-0">掌握程度</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="masteryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 类型详情 -->
+<div class="row g-4 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-list-ul text-info me-2 fs-5"></i>
+                <h5 class="mb-0">各类型题目数量</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th class="px-4 py-3">类型</th>
+                                <th class="py-3">数量</th>
+                                <th class="py-3">占比</th>
+                                <th class="py-3">进度</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for type, count in type_stats %}
+                            <tr>
+                                <td class="px-4">
+                                    <span class="badge {{ 'bg-primary' if type == 'single' else 'bg-info' if type == 'multi' else 'bg-warning' if type == 'judge' else 'bg-secondary' }}">
+                                        {{ '单选题' if type == 'single' else '多选题' if type == 'multi' else '判断题' if type == 'judge' else '案例分析' if type == 'case' else '论文' if type == 'essay' else type }}
+                                    </span>
+                                </td>
+                                <td class="fw-medium">{{ count }}</td>
+                                <td>{{ '%.1f'|format(count / total * 100) if total > 0 else 0 }}%</td>
+                                <td style="width: 200px;">
+                                    <div class="progress rounded-pill" style="height: 8px;">
+                                        <div class="progress-bar" style="width: {{ count / total * 100 if total > 0 else 0 }}%"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 学习建议 -->
+<div class="row">
+    <div class="col-12">
+        <div class="card border-start border-4 border-primary">
+            <div class="card-body">
+                <h6 class="fw-bold mb-3"><i class="bi bi-lightbulb text-warning me-2"></i>学习建议</h6>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-1-circle text-primary me-2"></i>
+                            <span>建议每天复习 <strong>{{ (mastery_stats.learning if mastery_stats else 0) + (mastery_stats.new if mastery_stats else 0) }}</strong> 道题目</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-2-circle text-success me-2"></i>
+                            <span>当前正确率 <strong>{{ correct_rate }}%</strong>，目标是 70% 以上</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-3-circle text-info me-2"></i>
+                            <span>已掌握 <strong>{{ mastery_stats.review if mastery_stats else 0 }}</strong> 道，继续保持</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 类型分布图
+    const typeCtx = document.getElementById('typeChart').getContext('2d');
+    new Chart(typeCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ type_stats|map(attribute='0')|list|tojson }},
+            datasets: [{
+                data: {{ type_stats|map(attribute='1')|list|tojson }},
+                backgroundColor: [
+                    'rgba(67, 97, 238, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(139, 92, 246, 0.8)',
+                    'rgba(239, 68, 68, 0.8)'
+                ],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            cutout: '60%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true
+                    }
+                }
+            }
+        }
+    });
+
+    // 掌握程度图
+    const masteryCtx = document.getElementById('masteryChart').getContext('2d');
+    new Chart(masteryCtx, {
+        type: 'bar',
+        data: {
+            labels: ['新题', '学习中', '已掌握'],
+            datasets: [{
+                data: [
+                    {{ mastery_stats.new if mastery_stats else 0 }},
+                    {{ mastery_stats.learning if mastery_stats else 0 }},
+                    {{ mastery_stats.review if mastery_stats else 0 }}
+                ],
+                backgroundColor: [
+                    'rgba(148, 163, 184, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(16, 185, 129, 0.8)'
+                ],
+                borderRadius: 8,
+                borderSkipped: false
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { display: false }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

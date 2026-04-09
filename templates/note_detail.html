@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}{{ note.title }} - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}知识点详情{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">{{ note.title }}</h5>
+        <div>
+            <a href="{{ url_for('note_edit', nid=note.id) }}" class="btn btn-sm btn-outline-primary">编辑</a>
+            <a href="{{ url_for('notes') }}" class="btn btn-sm btn-outline-secondary">返回</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="mb-3">
+            <span class="badge bg-secondary">{{ note.category or '未分类' }}</span>
+            {% if note.tags %}
+                {% for tag in note.tags.split(',') %}
+                <span class="badge bg-info">{{ tag.strip() }}</span>
+                {% endfor %}
+            {% endif %}
+        </div>
+        <div class="content">
+            {{ note.content }}
+        </div>
+    </div>
+    <div class="card-footer text-muted">
+        创建于: {{ note.created_at.strftime('%Y-%m-%d %H:%M') }} |
+        更新于: {{ note.updated_at.strftime('%Y-%m-%d %H:%M') }}
+    </div>
+</div>
+{% endblock %}

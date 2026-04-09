@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}单题练习 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}随机练习{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>
+            <span class="badge bg-{{ 'primary' if question.question_type == 'single' else 'info' if question.question_type == 'multi' else 'warning' }}">
+                {{ '单选' if question.question_type == 'single' else '多选' if question.question_type == 'multi' else '判断' }}
+            </span>
+            <span class="badge bg-secondary ms-2">{{ question.category or '未分类' }}</span>
+        </span>
+        <span class="badge badge-difficulty-{{ question.difficulty }}">难度: {{ question.difficulty }}</span>
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">{{ question.content }}</h5>
+
+        {% if question.options %}
+        <form id="answerForm" method="post" action="{{ url_for('practice_submit') }}">
+            <input type="hidden" name="qid" value="{{ question.id }}">
+
+            <div class="options mt-4">
+                {% for opt in question.options %}
+                <div class="form-check question-option" onclick="selectOption('{{ loop.index0 }}')">
+                    <input class="form-check-input" type="{{ 'radio' if question.question_type != 'multi' else 'checkbox' }}"
+                           name="answer" value="{{ loop.index0 }}"
+                           id="option{{ loop.index0 }}">
+                    <label class="form-check-label" for="option{{ loop.index0 }}">
+                        {{ opt }}
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">提交答案</button>
+                <a href="{{ url_for('practice_single') }}" class="btn btn-outline-secondary ms-2">下一题</a>
+            </div>
+        </form>
+        {% else %}
+        <form method="post" action="{{ url_for('practice_submit') }}">
+            <input type="hidden" name="qid" value="{{ question.id }}">
+            <div class="mb-3">
+                <label class="form-label">请输入答案:</label>
+                <textarea name="answer" class="form-control" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">提交答案</button>
+        </form>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <small class="text-muted">
+            题目ID: {{ question.id }} |
+            已复习: {{ question.repetitions }} 次 |
+            间隔: {{ question.interval }} 天 |
+            下次复习: {{ question.next_review.strftime('%Y-%m-%d') if question.next_review else '立即' }}
+        </small>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function selectOption(index) {
+        document.querySelectorAll('.question-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        document.querySelectorAll('.question-option')[index].classList.add('selected');
+    }
+</script>
+{% endblock %}

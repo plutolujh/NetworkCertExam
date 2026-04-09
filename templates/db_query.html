@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}SQL查询 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}SQL查询{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">查询语句 (仅支持 SELECT)</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <textarea name="sql" class="form-control font-monospace" rows="4"
+                            placeholder="SELECT * FROM question LIMIT 10">{{ sql }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">执行查询</button>
+                    <a href="{{ url_for('db_status') }}" class="btn btn-secondary">返回</a>
+                </form>
+
+                {% if error %}
+                <div class="alert alert-danger mt-3">{{ error }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if result %}
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">查询结果 ({{ result|length }} 条)</h5>
+            </div>
+            <div class="card-body table-responsive">
+                <table class="table table-bordered table-sm">
+                    <thead>
+                        <tr>
+                            {% for col in columns %}
+                            <th>{{ col }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">常用查询示例</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><code>SELECT * FROM question LIMIT 10</code> - 查看前10条题目</li>
+                            <li><code>SELECT COUNT(*) FROM question</code> - 统计题目总数</li>
+                            <li><code>SELECT * FROM question WHERE category = '网络基础'</code> - 按分类查询</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled">
+                            <li><code>SELECT * FROM question WHERE question_type = 'single'</code> - 查询单选题</li>
+                            <li><code>SELECT * FROM question ORDER BY RANDOM() LIMIT 5</code> - 随机5条</li>
+                            <li><code>PRAGMA table_info(question)</code> - 查看表结构</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

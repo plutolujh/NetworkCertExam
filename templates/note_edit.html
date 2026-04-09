@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}{{ '编辑' if note else '创建' }}知识点 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}{{ '编辑' if note else '创建' }}知识点{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-body">
+        <form method="post">
+            <div class="mb-3">
+                <label class="form-label">标题</label>
+                <input type="text" name="title" class="form-control" value="{{ note.title if note else '' }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">分类</label>
+                <select name="category" class="form-select">
+                    <option value="">选择分类</option>
+                    <option value="计算机网络基础" {{ 'selected' if note and note.category == '计算机网络基础' else '' }}>计算机网络基础</option>
+                    <option value="网络规划与设计" {{ 'selected' if note and note.category == '网络规划与设计' else '' }}>网络规划与设计</option>
+                    <option value="网络工程实施" {{ 'selected' if note and note.category == '网络工程实施' else '' }}>网络工程实施</option>
+                    <option value="网络运维管理" {{ 'selected' if note and note.category == '网络运维管理' else '' }}>网络运维管理</option>
+                    <option value="新一代技术" {{ 'selected' if note and note.category == '新一代技术' else '' }}>新一代技术</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">标签 (用逗号分隔)</label>
+                <input type="text" name="tags" class="form-control" value="{{ note.tags if note else '' }}">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">内容 (支持Markdown)</label>
+                <textarea name="content" class="form-control" rows="15" required>{{ note.content if note else '' }}</textarea>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-primary">保存</button>
+                <a href="{{ url_for('notes') }}" class="btn btn-outline-secondary">取消</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
