@@ -2,12 +2,13 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>网络规划师备考 - 每日一题</title>
-  <link rel="manifest" href="/manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+  <meta name="theme-color" content="#2563eb">
+  <title>网络规划设计师 - 备考系统</title>
   <style>
     :root {
       --primary: #2563eb;
+      --primary-dark: #1d4ed8;
       --bg: #f8fafc;
       --card-bg: #ffffff;
       --text: #1e293b;
@@ -15,6 +16,7 @@
       --border: #e2e8f0;
       --success: #22c55e;
       --warning: #f59e0b;
+      --error: #dc2626;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -24,368 +26,295 @@
       line-height: 1.6;
       min-height: 100vh;
     }
+
     header {
       background: var(--primary);
       color: white;
       padding: 1.5rem 1rem;
       text-align: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
     }
-    header h1 { font-size: 1.25rem; font-weight: 600; }
-    header .date { font-size: 0.875rem; opacity: 0.9; margin-top: 0.25rem; }
-    main { max-width: 680px; margin: 0 auto; padding: 1rem; }
+    header h1 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    header .subtitle {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem;
+    }
+
+    /* 统计卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    .stat-value {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+    .stat-value.green { color: var(--success); }
+    .stat-value.orange { color: var(--warning); }
+
+    /* 功能卡片 */
     .section-title {
       font-size: 1rem;
       font-weight: 600;
       color: var(--text-secondary);
-      margin: 1.5rem 0 0.75rem;
+      margin-bottom: 1rem;
       padding-bottom: 0.5rem;
       border-bottom: 2px solid var(--border);
     }
-    .card {
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card {
       background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .card h2 {
-      font-size: 1.125rem;
-      font-weight: 600;
+    .feature-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .feature-card:active {
+      transform: translateY(0);
+    }
+    .feature-icon {
+      font-size: 2rem;
       margin-bottom: 0.75rem;
-      color: var(--primary);
     }
-    .tag {
+    .feature-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .feature-tag {
       display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.5rem;
       background: #dbeafe;
       color: #1d4ed8;
-      font-size: 0.75rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      margin-right: 0.5rem;
-      margin-bottom: 0.25rem;
     }
-    ul { padding-left: 1.25rem; }
-    li { margin-bottom: 0.5rem; }
-    .progress-bar {
-      background: var(--border);
-      border-radius: 8px;
-      height: 8px;
-      margin-top: 1rem;
-      overflow: hidden;
+    .feature-tag.new {
+      background: #dcfce7;
+      color: #15803d;
     }
-    .progress-bar-fill {
-      background: var(--primary);
-      height: 100%;
-      border-radius: 8px;
-      transition: width 0.3s ease;
+
+    /* 即将上线 */
+    .coming-soon {
+      opacity: 0.6;
     }
+    .coming-soon .feature-icon {
+      filter: grayscale(0.5);
+    }
+
+    /* 底部信息 */
     .footer {
       text-align: center;
       padding: 2rem 1rem;
       color: var(--text-secondary);
       font-size: 0.875rem;
     }
-    .btn {
-      display: inline-block;
-      background: var(--primary);
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 500;
-      margin-top: 1rem;
-      border: none;
-      cursor: pointer;
-    }
-    .btn-secondary { background: var(--text-secondary); }
-    .loading { text-align: center; padding: 2rem; color: var(--text-secondary); }
-    .error { background: #fee2e2; color: #dc2626; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
-    .task-item {
+    .footer-links {
       display: flex;
-      align-items: center;
-      padding: 0.75rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .task-item:last-child { border-bottom: none; }
-    .task-item input[type="checkbox"] { width: 22px; height: 22px; margin-right: 0.75rem; cursor: pointer; }
-    .task-item.done span { text-decoration: line-through; color: var(--text-secondary); }
-    .knowledge-item {
-      background: #f8fafc;
-      padding: 1rem;
-      border-radius: 8px;
+      justify-content: center;
+      gap: 1.5rem;
       margin-bottom: 1rem;
     }
-    .knowledge-item h3 { font-size: 0.875rem; color: var(--primary); margin-bottom: 0.5rem; }
-    .framework-item {
-      background: #fef3c7;
-      padding: 0.75rem;
-      border-radius: 6px;
-      margin-bottom: 0.5rem;
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
       font-size: 0.9rem;
-      line-height: 1.5;
     }
-    .essay-box {
-      background: #f1f5f9;
-      padding: 1rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
+    .footer-links a:hover {
+      text-decoration: underline;
     }
-    .essay-box p { margin-top: 0.5rem; color: var(--text-secondary); }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0.5rem;
+      }
+      .stat-card {
+        padding: 0.75rem 0.5rem;
+      }
+      .stat-value {
+        font-size: 1.4rem;
+      }
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>📚 网络规划师备考</h1>
-    <div class="date" id="currentDate"></div>
+    <h1>📚 网络规划设计师 - 备考系统</h1>
+    <div class="subtitle">2026年11月14日考试</div>
   </header>
 
   <main>
-    <div id="errorBox" style="display: none;" class="error"></div>
-
-    <!-- 今日概览 -->
-    <div class="card">
-      <h2>📋 今日学习任务</h2>
-      <div id="dailyTasks"></div>
-    </div>
-
-    <!-- 综合知识 -->
-    <div class="section-title">🎯 今日考点</div>
-    <div class="card">
-      <div id="knowledgePoints">
-        <div class="loading">加载中...</div>
+    <!-- 学习统计 -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-total">--</div>
+        <div class="stat-label">题库总数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value green" id="stat-answered">--</div>
+        <div class="stat-label">已练习</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value orange" id="stat-accuracy">--%</div>
+        <div class="stat-label">正确率</div>
       </div>
     </div>
 
-    <!-- 案例分析 -->
-    <div class="section-title">📝 案例分析 - 答题框架</div>
-    <div class="card" id="caseStudy">
-      <div class="loading">加载中...</div>
+    <!-- 功能入口 -->
+    <div class="section-title">📖 学习中心</div>
+    <div class="feature-grid">
+      <a href="daily.html" class="feature-card">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">每日一题</div>
+        <div class="feature-desc">每天一道精选真题，涵盖综合知识、案例分析高频考点</div>
+        <span class="feature-tag new">练习中</span>
+      </a>
+      <a href="outline.html" class="feature-card">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">考试大纲</div>
+        <div class="feature-desc">高频考点汇总，结合2021-2024年真题整理</div>
+        <span class="feature-tag">必看</span>
+      </a>
     </div>
 
-    <!-- 论文写作 -->
-    <div class="section-title">✍️ 论文写作 - 今日素材</div>
-    <div class="card" id="essayWriting">
-      <div class="loading">加载中...</div>
-    </div>
-
-    <!-- 掌握进度 -->
-    <div class="section-title">📊 掌握进度</div>
-    <div class="card">
-      <div id="progressTracker">
-        <div class="loading">加载中...</div>
+    <div class="section-title">🚧 即将上线</div>
+    <div class="feature-grid">
+      <a href="case.html" class="feature-card">
+        <div class="feature-icon">📝</div>
+        <div class="feature-title">案例分析专项</div>
+        <div class="feature-desc">网络规划设计、网络安全、传输网络等五大题型精讲</div>
+        <span class="feature-tag new">练习中</span>
+      </a>
+      <div class="feature-card coming-soon">
+        <div class="feature-icon">📄</div>
+        <div class="feature-title">论文写作</div>
+        <div class="feature-desc">高频方向范文、写作模板、自测评分</div>
+        <span class="feature-tag">即将上线</span>
       </div>
     </div>
 
-    <div class="footer">
-      <p>距离考试还有 <span id="daysLeft" style="font-weight: bold; color: var(--primary);">--</span> 天</p>
-      <div style="margin-top: 1rem;">
-        <button class="btn btn-secondary" onclick="prevDay()">← 前一天</button>
-        <button class="btn" onclick="nextDay()">后一天 →</button>
+    <div class="feature-grid">
+      <div class="feature-card coming-soon">
+        <div class="feature-icon">📖</div>
+        <div class="feature-title">错题本</div>
+        <div class="feature-desc">自动记录错题，智能复习提醒</div>
+        <span class="feature-tag">即将上线</span>
+      </div>
+      <div class="feature-card coming-soon">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">学习进度</div>
+        <div class="feature-desc">图形化显示各章节掌握情况</div>
+        <span class="feature-tag">即将上线</span>
       </div>
     </div>
   </main>
 
+  <div class="footer">
+    <div class="footer-links">
+      <a href="daily.html">每日一题</a>
+      <a href="outline.html">考试大纲</a>
+      <a href="case.html">案例分析</a>
+    </div>
+    <p>距离考试还有 <span id="daysLeft" style="font-weight: bold; color: var(--primary);">--</span> 天</p>
+    <div class="version-info">
+      <p>v1.0.2 | 2026-05-31</p>
+      <p class="changelog">新增：案例分析专项页面（2022-2024年真题）</p>
+    </div>
+  </div>
+
+  <style>
+    .version-info {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .version-info p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin: 0.25rem 0;
+    }
+    .changelog {
+      font-size: 0.7rem !important;
+      color: var(--text-secondary);
+      opacity: 0.8;
+    }
+  </style>
+
   <script>
-    // 配置
-    const API_BASE = 'https://networkcert-api.plutolu.workers.dev/api';
-    let currentDate = new Date().toISOString().split('T')[0];
+    const API_BASE = 'https://networkcert-daily.plutolu.workers.dev/api';
 
-    // 初始化
-    async function init() {
-      document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
-        year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
-      });
-
-      const examDate = new Date('2026-11-14');
-      const daysLeft = Math.ceil((examDate - new Date()) / (1000 * 60 * 60 * 24));
-      document.getElementById('daysLeft').textContent = daysLeft;
-
-      // 初始化数据库（创建表和初始数据）
-      await fetch(`${API_BASE}/init`, { method: 'POST' }).catch(() => {});
-
-      // 加载当日内容
-      await loadDailyContent();
-
-      // 加载进度
-      await loadProgress();
-    }
-
-    // 加载每日内容
-    async function loadDailyContent() {
+    async function loadStats() {
       try {
-        const res = await fetch(`${API_BASE}/daily?date=${currentDate}`);
+        const res = await fetch(`${API_BASE}/stats`);
         const data = await res.json();
-        renderDailyContent(data);
-      } catch (err) {
-        showError('加载失败，请稍后重试');
-      }
-    }
-
-    // 渲染每日内容
-    function renderDailyContent(data) {
-      // 渲染任务列表
-      const taskTypes = ['综合知识', '案例分析', '论文'];
-      const tasksHtml = taskTypes.map(t => `
-        <div class="task-item" data-type="${t}">
-          <input type="checkbox" id="task-${t}" onchange="updateProgress('${t}')">
-          <span>${t} 练习</span>
-        </div>
-      `).join('');
-      document.getElementById('dailyTasks').innerHTML = tasksHtml;
-
-      // 渲染知识点
-      let knowledge = [];
-      try {
-        knowledge = JSON.parse(data.knowledge || '[]');
-      } catch (e) {}
-
-      const knowledgeHtml = knowledge.map(k => {
-        const pointsHtml = k.points ? k.points.map(p => `<li>${p}</li>`).join('') : '';
-        return `
-          <div class="knowledge-item">
-            <h3>${k.title}</h3>
-            <ul style="margin-top: 0.5rem; font-size: 0.875rem;">${pointsHtml}</ul>
-          </div>
-        `;
-      }).join('');
-      document.getElementById('knowledgePoints').innerHTML = knowledgeHtml || '<p style="color: var(--text-secondary);">今日无新内容</p>';
-
-      // 渲染案例分析答题框架
-      if (data.type === 'case' && data.framework) {
-        let framework = [];
-        try {
-          framework = JSON.parse(data.framework);
-        } catch (e) {}
-
-        const frameworkHtml = framework.map(f => `
-          <div class="framework-item">${f}</div>
-        `).join('');
-        document.getElementById('caseStudy').innerHTML = `
-          <h3 style="color: var(--primary); margin-bottom: 0.75rem;">${data.topic}</h3>
-          ${frameworkHtml}
-        `;
-      } else {
-        document.getElementById('caseStudy').innerHTML = `
-          <p style="color: var(--text-secondary);">今日无案例分析任务</p>
-        `;
-      }
-
-      // 渲染论文
-      document.getElementById('essayWriting').innerHTML = `
-        <h3 style="color: var(--primary); margin-bottom: 0.75rem;">论文写作要点</h3>
-        <div class="essay-box">
-          <strong>摘要模板：</strong>
-          <p>20XX年X月，我作为项目经理主持了XX单位网络系统XX项目。针对...等问题，设计了...方案。实施后，XX指标提升XX%，获得了用户高度认可。</p>
-        </div>
-        <div style="margin-top: 1rem;">
-          <strong>写作结构：</strong>
-          <ul style="margin-top: 0.5rem; padding-left: 1.25rem;">
-            <li>背景（400字）：项目背景、痛点问题</li>
-            <li>需求（300字）：业务需求、技术需求</li>
-            <li>方案（800字）：架构设计、关键技术、实施步骤</li>
-            <li>效果（400字）：量化指标、用户反馈</li>
-            <li>总结（300字）：经验教训、改进方向</li>
-          </ul>
-        </div>
-      `;
-    }
-
-    // 加载学习进度
-    async function loadProgress() {
-      try {
-        const res = await fetch(`${API_BASE}/progress?date=${currentDate}`);
-        const data = await res.json();
-
-        // 如果是数组，设置各个任务的完成状态
-        if (Array.isArray(data)) {
-          data.forEach(item => {
-            const checkbox = document.getElementById(`task-${item.task_type}`);
-            if (checkbox && item.status === 'completed') {
-              checkbox.checked = true;
-              checkbox.parentElement.classList.add('done');
-            }
-          });
-        }
-      } catch (e) {}
-
-      // 渲染总体进度（简化版）
-      document.getElementById('progressTracker').innerHTML = `
-        <div style="margin-bottom: 1rem;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-            <span>综合知识</span>
-            <span id="comprehensive-rate">--%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-bar-fill" id="comprehensive-bar" style="width: 0%"></div></div>
-        </div>
-        <div style="margin-bottom: 1rem;">
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-            <span>案例分析</span>
-            <span id="case-rate">--%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-bar-fill" id="case-bar" style="width: 0%"></div></div>
-        </div>
-        <div>
-          <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
-            <span>论文写作</span>
-            <span id="essay-rate">--%</span>
-          </div>
-          <div class="progress-bar"><div class="progress-bar-fill" id="essay-bar" style="width: 0%"></div></div>
-        </div>
-      `;
-    }
-
-    // 更新学习进度
-    async function updateProgress(taskType) {
-      const checkbox = document.getElementById(`task-${taskType}`);
-      const status = checkbox.checked ? 'completed' : 'pending';
-      checkbox.parentElement.classList.toggle('done', checkbox.checked);
-
-      try {
-        await fetch(`${API_BASE}/progress`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            date: currentDate,
-            task_type: taskType,
-            status: status
-          })
-        });
+        document.getElementById('stat-total').textContent = data.total || 0;
+        document.getElementById('stat-answered').textContent = data.answered || 0;
+        document.getElementById('stat-accuracy').textContent = (data.accuracy || 0) + '%';
       } catch (e) {
-        console.error('更新失败', e);
+        console.error('加载统计失败', e);
+        // 显示默认数据
+        document.getElementById('stat-total').textContent = '757';
+        document.getElementById('stat-answered').textContent = '0';
+        document.getElementById('stat-accuracy').textContent = '0%';
       }
     }
 
-    // 导航
-    function prevDay() {
-      const d = new Date(currentDate);
-      d.setDate(d.getDate() - 1);
-      currentDate = d.toISOString().split('T')[0];
-      loadDailyContent();
-      loadProgress();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    // 考试倒计时
+    const examDate = new Date('2026-11-14');
+    const daysLeft = Math.ceil((examDate - new Date()) / (1000 * 60 * 60 * 24));
+    document.getElementById('daysLeft').textContent = daysLeft;
 
-    function nextDay() {
-      const d = new Date(currentDate);
-      d.setDate(d.getDate() + 1);
-      currentDate = d.toISOString().split('T')[0];
-      loadDailyContent();
-      loadProgress();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function showError(msg) {
-      const el = document.getElementById('errorBox');
-      el.textContent = msg;
-      el.style.display = 'block';
-      setTimeout(() => el.style.display = 'none', 5000);
-    }
-
-    init();
+    // 加载统计
+    loadStats();
   </script>
 </body>
 </html>
