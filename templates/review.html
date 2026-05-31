@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}间隔复习 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}间隔复习 (SM-2){% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h5 class="mb-0"><i class="bi bi-clock me-2"></i>待复习题目</h5>
+    </div>
+    <div class="card-body">
+        {% if questions %}
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>共有 <strong>{{ questions|length }}</strong> 道题目待复习
+        </div>
+
+        <div class="list-group">
+            {% for q in questions %}
+            <a href="{{ url_for('practice_single', qid=q.id) }}" class="list-group-item list-group-item-action">
+                <div class="d-flex w-100 justify-content-between">
+                    <h6 class="mb-1">{{ q.content[:60] }}{{ '...' if q.content|length > 60 else '' }}</h6>
+                    <small class="text-muted">
+                        间隔: {{ q.interval }}天 | 复习: {{ q.repetitions }}次
+                    </small>
+                </div>
+                <small class="text-muted">
+                    下次复习: {{ q.next_review.strftime('%Y-%m-%d') if q.next_review else '立即' }}
+                </small>
+            </a>
+            {% endfor %}
+        </div>
+
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('practice_single') }}" class="btn btn-primary btn-lg">开始复习</a>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-check-circle text-success" style="font-size: 4rem;"></i>
+            <h5 class="mt-3">太棒了！已完成今日复习</h5>
+            <p class="text-muted">休息一下，明天再来</p>
+            <a href="{{ url_for('practice_single') }}" class="btn btn-primary">继续练习</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h6>SM-2 算法说明</h6>
+        <ul class="text-muted">
+            <li>评分0-2: 回答错误，重新学习，间隔重置为1天</li>
+            <li>评分3: 回答正确但困难，间隔不变</li>
+            <li>评分4: 回答正确且一般，间隔按1.2倍增长</li>
+            <li>评分5: 回答正确且轻松，间隔按1.3倍增长</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}考试结果 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}考试结果{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header {{ 'bg-success' if score >= 60 else 'bg-warning' }} text-white">
+        <h5 class="mb-0">考试完成！</h5>
+    </div>
+    <div class="card-body text-center">
+        <h1 class="display-1">{{ score }}分</h1>
+        <p class="lead">
+            正确: {{ correct_count }} / {{ total }} 题
+        </p>
+        <div class="progress mb-4" style="height: 25px;">
+            <div class="progress-bar {{ 'bg-success' if score >= 60 else 'bg-warning' }}"
+                 role="progressbar" style="width: {{ score }}%">
+                {{ score }}%
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">答案解析</h5>
+    </div>
+    <div class="card-body">
+        {% for r in results %}
+        <div class="border-bottom py-3">
+            <h6>
+                <span class="badge bg-{{ 'success' if r.is_correct else 'danger' }}">
+                    {{ loop.index }}
+                </span>
+                {{ r.question.content[:80] }}{{ '...' if r.question.content|length > 80 else '' }}
+            </h6>
+            <div class="ms-3">
+                <p class="mb-1">
+                    <strong>你的答案:</strong>
+                    <span class="{{ 'text-success' if r.is_correct else 'text-danger' }}">
+                        {{ r.user_answer or '未作答' }}
+                    </span>
+                </p>
+                {% if not r.is_correct %}
+                <p class="mb-1">
+                    <strong>正确答案:</strong>
+                    <span class="text-success">{{ r.question.answer }}</span>
+                </p>
+                {% endif %}
+                {% if r.question.explanation %}
+                <p class="text-muted mb-0">
+                    <small>{{ r.question.explanation }}</small>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a href="{{ url_for('exam_simulation') }}" class="btn btn-primary">再考一次</a>
+    <a href="{{ url_for('practice') }}" class="btn btn-outline-secondary">返回练习</a>
+</div>
+{% endblock %}

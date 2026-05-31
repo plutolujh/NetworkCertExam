@@ -1,0 +1,174 @@
+{% extends "base.html" %}
+
+{% block title %}数据库状态 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}数据库状态{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- 数据库基本信息 -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">数据库信息</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="text-muted">数据库路径</td>
+                        <td><code>{{ db_path }}</code></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">文件大小</td>
+                        <td><strong>{{ db_size_mb }} MB</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">优化操作</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('db_optimize') }}" style="display:inline;">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">
+                                    执行优化 (VACUUM + ANALYZE)
+                                </button>
+                            </form>
+                            <a href="{{ url_for('db_query') }}" class="btn btn-sm btn-outline-success">
+                                SQL查询
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 学习记录统计 -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">学习记录</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-4">
+                        <div class="stat-number">{{ study_stats.total_records }}</div>
+                        <div class="text-muted small">总记录</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-number text-success">{{ study_stats.correct_count }}</div>
+                        <div class="text-muted small">正确</div>
+                    </div>
+                    <div class="col-4">
+                        <div class="stat-number text-info">{{ study_stats.today_records }}</div>
+                        <div class="text-muted small">今日</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 快速统计 -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">题库统计</h5>
+            </div>
+            <div class="card-body">
+                {% for table in tables %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="badge bg-primary">{{ table.name }}</span>
+                    <span>{{ table.rows }} 行</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <!-- 表详细信息 -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">数据表详情</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>表名</th>
+                            <th>记录数</th>
+                            <th>索引数</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for table in tables %}
+                        <tr>
+                            <td>
+                                <strong>{{ table.name }}</strong>
+                            </td>
+                            <td>{{ table.rows }}</td>
+                            <td>{{ table.indexes }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 题目分类统计 -->
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">题目分类统计 (Top 20)</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="alert alert-info">
+            <h6>优化说明</h6>
+            <ul class="mb-0">
+                <li><strong>VACUUM</strong>: 重建数据库文件，回收删除记录占用的空间</li>
+                <li><strong>ANALYZE</strong>: 更新表统计信息，帮助SQLite优化查询计划</li>
+                <li>建议在大量删除操作后或定期执行优化</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // 分类统计图表
+    const categoryLabels = {{ category_stats|map(attribute='0')|list|tojson }};
+    const categoryData = {{ category_stats|map(attribute='1')|list|tojson }};
+
+    const ctx = document.getElementById('categoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                label: '题目数量',
+                data: categoryData,
+                backgroundColor: '#3498db'
+            }]
+        },
+        options: {
+            responsive: true,
+            indexAxis: 'y',
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+{% endblock %}

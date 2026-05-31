@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}导入题库 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}导入题库{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header bg-success text-white">
+        <h5 class="mb-0"><i class="bi bi-upload me-2"></i>导入题目</h5>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            <div class="mb-4">
+                <label class="form-label">选择JSON文件</label>
+                <input type="file" name="file" class="form-control" accept=".json" required>
+            </div>
+            <div class="alert alert-info">
+                <h6>JSON文件格式说明:</h6>
+                <pre class="mb-0"><code>[
+  {
+    "type": "single",           // single/multi/judge/case/essay
+    "content": "题目内容",
+    "options": ["A. 选项1", "B. 选项2", "C. 选项3", "D. 选项4"],
+    "answer": "0",              // 正确答案索引(字符串)或文字答案
+    "explanation": "解析内容",
+    "difficulty": 1,            // 难度1-5
+    "category": "分类名称",
+    "tags": "标签1,标签2"
+  }
+]</code></pre>
+            </div>
+            <button type="submit" class="btn btn-primary">导入</button>
+            <a href="{{ url_for('questions') }}" class="btn btn-outline-secondary">返回</a>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">示例数据</h5>
+    </div>
+    <div class="card-body">
+        <p>您可以下载示例JSON文件来了解格式：</p>
+        <a href="data:application/json;charset=utf-8,{{ example_json|urlencode }}" download="questions_template.json" class="btn btn-outline-primary">
+            <i class="bi bi-download me-1"></i>下载模板
+        </a>
+    </div>
+</div>
+{% endblock %}

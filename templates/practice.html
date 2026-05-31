@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}练习模式 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}练习中心{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <!-- 练习模式 -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-pencil-square text-primary me-2 fs-5"></i>
+                <h5 class="mb-0">练习模式</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('practice_single') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
+                        <span class="stat-icon me-3" style="width: 44px; height: 44px; background: linear-gradient(135deg, #4361ee, #4cc9f0); border-radius: 12px;">
+                            <i class="bi bi-shuffle text-white"></i>
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">随机练习</div>
+                            <small class="text-muted">从题库中随机抽取题目</small>
+                        </div>
+                        <span class="badge bg-light text-dark">推荐</span>
+                    </a>
+                    <a href="{{ url_for('practice_wrong') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
+                        <span class="stat-icon me-3" style="width: 44px; height: 44px; background: linear-gradient(135deg, #ef4444, #f87171); border-radius: 12px;">
+                            <i class="bi bi-x-circle text-white"></i>
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">错题本</div>
+                            <small class="text-muted">复习之前做错的题目</small>
+                        </div>
+                        <span class="badge bg-danger">强化</span>
+                    </a>
+                    <a href="{{ url_for('practice_review') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
+                        <span class="stat-icon me-3" style="width: 44px; height: 44px; background: linear-gradient(135deg, #f59e0b, #fbbf24); border-radius: 12px;">
+                            <i class="bi bi-clock text-white"></i>
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">间隔复习</div>
+                            <small class="text-muted">SM-2智能复习计划</small>
+                        </div>
+                        <span class="badge bg-warning text-dark">高效</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模拟考试 -->
+    <div class="col-md-6">
+        <div class="card h-100">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-clock-history text-success me-2 fs-5"></i>
+                <h5 class="mb-0">模拟考试</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="list-group list-group-flush">
+                    <a href="{{ url_for('exam_simulation') }}" class="list-group-item list-group-item-action d-flex align-items-center py-3">
+                        <span class="stat-icon me-3" style="width: 44px; height: 44px; background: linear-gradient(135deg, #10b981, #34d399); border-radius: 12px;">
+                            <i class="bi bi-file-earmark-text text-white"></i>
+                        </span>
+                        <div class="flex-grow-1">
+                            <div class="fw-medium">综合知识</div>
+                            <small class="text-muted">75道选择题 · 225分钟</small>
+                        </div>
+                        <span class="badge bg-success">真题</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 按类型练习 -->
+<div class="row g-4 mt-2">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex align-items-center">
+                <i class="bi bi-grid text-info me-2 fs-5"></i>
+                <h5 class="mb-0">按题型练习</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <a href="{{ url_for('questions', type='single') }}" class="btn btn-outline-primary w-100 py-3 rounded-3">
+                            <i class="bi bi-check-circle me-2"></i>单选题
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="{{ url_for('questions', type='multi') }}" class="btn btn-outline-info w-100 py-3 rounded-3">
+                            <i class="bi bi-check2-square me-2"></i>多选题
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="{{ url_for('questions', type='judge') }}" class="btn btn-outline-warning w-100 py-3 rounded-3">
+                            <i class="bi bi-toggle-on me-2"></i>判断题
+                        </a>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a href="{{ url_for('questions', type='case') }}" class="btn btn-outline-secondary w-100 py-3 rounded-3">
+                            <i class="bi bi-file-earmark-text me-2"></i>案例分析
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}题库 - 网络规划师考试学习系统{% endblock %}
+
+{% block page_title %}题库管理{% endblock %}
+
+{% block content %}
+<!-- 筛选表单 -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">题目类型</label>
+                <select name="type" class="form-select rounded-3">
+                    <option value="all">全部类型</option>
+                    <option value="single" {{ 'selected' if current_type == 'single' else '' }}>单选题</option>
+                    <option value="multi" {{ 'selected' if current_type == 'multi' else '' }}>多选题</option>
+                    <option value="judge" {{ 'selected' if current_type == 'judge' else '' }}>判断题</option>
+                    <option value="case" {{ 'selected' if current_type == 'case' else '' }}>案例分析</option>
+                    <option value="essay" {{ 'selected' if current_type == 'essay' else '' }}>论文</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">分类</label>
+                <select name="category" class="form-select rounded-3">
+                    <option value="all">全部分类</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {{ 'selected' if current_category == cat else '' }}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100 rounded-3">
+                    <i class="bi bi-funnel me-1"></i>筛选
+                </button>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-flex gap-2 justify-content-md-end">
+                    <a href="{{ url_for('import_questions') }}" class="btn btn-success rounded-3">
+                        <i class="bi bi-upload me-1"></i>导入
+                    </a>
+                    <a href="{{ url_for('export_questions') }}" class="btn btn-outline-secondary rounded-3">
+                        <i class="bi bi-download me-1"></i>导出
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- 题目列表 -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="px-4 py-3" style="width: 60px;">ID</th>
+                        <th class="py-3" style="width: 80px;">类型</th>
+                        <th class="py-3">题目内容</th>
+                        <th class="py-3" style="width: 120px;">分类</th>
+                        <th class="py-3" style="width: 80px;">难度</th>
+                        <th class="py-3" style="width: 140px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for q in questions %}
+                    <tr>
+                        <td class="px-4 text-muted">{{ q.id }}</td>
+                        <td>
+                            <span class="badge {{ 'bg-primary' if q.question_type == 'single' else 'bg-info' if q.question_type == 'multi' else 'bg-warning' if q.question_type == 'judge' else 'bg-secondary' }}">
+                                {{ '单选' if q.question_type == 'single' else '多选' if q.question_type == 'multi' else '判断' if q.question_type == 'judge' else '案例' if q.question_type == 'case' else '论文' }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('question_detail', qid=q.id) }}" class="text-decoration-none">
+                                {{ q.content[:70] }}{{ '...' if q.content|length > 70 else '' }}
+                            </a>
+                        </td>
+                        <td class="text-muted">{{ q.category or '-' }}</td>
+                        <td>
+                            <span class="badge badge-difficulty-{{ q.difficulty }}">{{ q.difficulty }}</span>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('question_detail', qid=q.id) }}" class="btn btn-sm btn-outline-primary rounded-2">查看</a>
+                            <a href="{{ url_for('practice_single', qid=q.id) }}" class="btn btn-sm btn-outline-success rounded-2">练习</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-5">
+                            <i class="bi bi-inbox" style="font-size: 2.5rem;"></i>
+                            <p class="mt-2 mb-0">暂无题目，请先 <a href="{{ url_for('import_questions') }}">导入题库</a></p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- 分页 -->
+{% if questions %}
+<nav class="mt-4">
+    <ul class="pagination justify-content-center">
+        <li class="page-item"><a class="page-link rounded-2" href="#">上一页</a></li>
+        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link rounded-2" href="#">下一页</a></li>
+    </ul>
+</nav>
+{% endif %}
+{% endblock %}
