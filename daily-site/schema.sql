@@ -87,6 +87,17 @@ CREATE TABLE IF NOT EXISTS wrong_questions (
   created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 案例分析答题记录表
+CREATE TABLE IF NOT EXISTS case_answers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  question_id TEXT NOT NULL,           -- 题目ID如 case_2024_1
+  year INTEGER NOT NULL,              -- 年份 2024
+  sub_question TEXT NOT NULL,         -- 子问题如 "问题1"
+  user_answer TEXT NOT NULL,          -- 用户答案
+  submitted_at TEXT DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(question_id, sub_question)
+);
+
 -- 创建索引加速查询
 CREATE INDEX IF NOT EXISTS idx_questions_category ON questions(category);
 CREATE INDEX IF NOT EXISTS idx_questions_tags ON questions(tags);

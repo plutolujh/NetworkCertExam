@@ -188,6 +188,36 @@ export default {
         });
       }
 
+      // 案例分析答题保存
+      if (path === '/api/case/submit' && request.method === 'POST') {
+        const body = await request.json();
+        const { question_id, year, sub_question, user_answer } = body;
+
+        await db.prepare(`
+          INSERT OR REPLACE INTO case_answers (question_id, year, sub_question, user_answer, submitted_at)
+          VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP)
+        `).bind(question_id, year, sub_question, user_answer).run();
+
+        return new Response(JSON.stringify({ status: 'saved' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      // 获取案例分析答题历史
+      if (path === '/api/case/history') {
+        const question_id = url.searchParams.get('question_id');
+        if (question_id) {
+          const result = await db.prepare('SELECT * FROM case_answers WHERE question_id = ?').bind(question_id).all();
+          return new Response(JSON.stringify(result), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        return new Response(JSON.stringify({ error: 'question_id required' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
       // 获取答题统计
       if (path === '/api/stats') {
         const total = await db.prepare('SELECT COUNT(*) as cnt FROM questions').first();

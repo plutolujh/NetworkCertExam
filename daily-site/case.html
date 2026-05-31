@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+  <meta name="theme-color" content="#2563eb">
+  <title>案例分析专项 - 备考系统</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1.5rem 1rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    header .subtitle {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 1.25rem 1rem;
+    }
+
+    /* 年份选择 */
+    .year-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .year-tab {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+    .year-tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .year-tab:hover:not(.active) {
+      background: #e2e8f0;
+    }
+
+    /* 题目卡片 */
+    .question-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+      margin-bottom: 1rem;
+    }
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .question-num {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .question-tags {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .question-content {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    .question-content p {
+      margin-bottom: 0.75rem;
+    }
+
+    /* 子问题 */
+    .sub-questions {
+      margin-top: 1rem;
+    }
+    .sub-q {
+      margin-bottom: 1rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+    }
+    .sub-q-title {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .sub-q-content {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+
+    /* 答题区域 */
+    .answer-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--border);
+    }
+    .answer-section h3 {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+    .answer-textarea {
+      width: 100%;
+      min-height: 120px;
+      padding: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 1rem;
+    }
+    .answer-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* 按钮 */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    .btn-secondary {
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    /* 结果显示 */
+    .result-section {
+      margin-top: 1.5rem;
+      padding: 1.5rem;
+      border-radius: 8px;
+      display: none;
+    }
+    .result-section.show {
+      display: block;
+    }
+    .result-correct {
+      background: #dcfce7;
+      border: 1px solid #86efac;
+    }
+    .result-wrong {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+    }
+    .result-answer {
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .result-explanation {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+
+    /* 导航按钮 */
+    .nav-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .nav-buttons .btn {
+      flex: 1;
+      text-align: center;
+    }
+
+    /* 加载状态 */
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-secondary);
+    }
+    .empty-state .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    /* 底部信息 */
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+    .version-info {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .version-info p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin: 0.25rem 0;
+    }
+
+    @media (max-width: 480px) {
+      .question-card {
+        padding: 1rem;
+      }
+      .nav-buttons {
+        flex-direction: column;
+      }
+    }
+    .save-success {
+      color: var(--success);
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    .save-success.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📝 案例分析专项</h1>
+    <div class="subtitle">2015-2024年真题训练</div>
+  </header>
+
+  <main>
+    <!-- 年份选择 -->
+    <div class="year-tabs" id="yearTabs">
+      <button class="year-tab active" data-year="2024">2024年</button>
+      <button class="year-tab" data-year="2023">2023年</button>
+      <button class="year-tab" data-year="2022">2022年</button>
+      <button class="year-tab" data-year="2021">2021年</button>
+      <button class="year-tab" data-year="2020">2020年</button>
+    </div>
+
+    <!-- 题目列表 -->
+    <div id="questionList">
+      <div class="loading">加载中...</div>
+    </div>
+
+    <!-- 导航按钮 -->
+    <div class="nav-buttons" id="navButtons" style="display: none;">
+      <button class="btn btn-secondary" id="prevBtn">上一题</button>
+      <button class="btn btn-primary" id="nextBtn">下一题</button>
+    </div>
+  </main>
+
+  <div class="footer">
+    <div class="footer-links">
+      <a href="index.html">返回首页</a>
+      <a href="daily.html">每日一题</a>
+      <a href="outline.html">考试大纲</a>
+    </div>
+    <div class="version-info">
+      <p>v1.0.1 | 2026-05-31</p>
+      <p class="changelog">新增：案例分析专项页面</p>
+    </div>
+  </div>
+
+  <style>
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .footer-links a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+    .changelog {
+      font-size: 0.7rem !important;
+      color: var(--text-secondary);
+      opacity: 0.8;
+    }
+  </style>
+
+  <script>
+    const API_BASE = 'https://networkcert-daily.plutolu.workers.dev/api';
+
+    // 案例分析数据（2024年真题）
+    const caseData = {
+      '2024': [
+        {
+          id: 'case_2024_1',
+          num: '第一题',
+          title: '网络系统规划设计与优化',
+          tags: ['SDN', 'WLAN', '负载均衡'],
+          content: '某高校因业务发展需要，拟建设覆盖三个校区的IPv6校园无线网络。三个校区在同一城市，假设校区之间光纤直连，传输链路带宽为10Gbps。各校区的学生人数约为3000、2500、2000人。无线控制器旁挂核心交换机，认证方式为portal认证。',
+          subQuestions: [
+            { q: '问题1', desc: '该网络采用SDN控制器集中控制方式，请分析该组网方案的特点，计算上行业务流量并给出信道配置原则' },
+            { q: '问题2', desc: '出口负载均衡是本方案的关键技术，请给出两种负载均衡算法及其优缺点' },
+            { q: '问题3', desc: '请给出AP license授权数量的计算依据，并说明信道配置原则' },
+            { q: '问题4', desc: '请给出portal认证流程及无线方式的优缺点' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及SDN无线网络组网、负载均衡算法、AP License计算、portal认证流程等知识点。'
+        },
+        {
+          id: 'case_2024_2',
+          num: '第二题',
+          title: '网络安全防护方案设计',
+          tags: ['防火墙', 'IDS', 'VPN'],
+          content: '某数据中心由于业务发展，需扩展出口带宽并提升安全性。采用堆叠框式交换机替代原有出口设备，通过IPS七元组过滤规则进行深度防御，部署态势感知平台实时监控。',
+          subQuestions: [
+            { q: '问题1', desc: '请给出防火墙备机策略和链路负载均衡应考虑的关键因素' },
+            { q: '问题2', desc: '请给出IPS七元组的具体内容，并说明七元组过滤规则的作用' },
+            { q: '问题3', desc: '态势感知平台应具备哪些核心功能？态势感知与防火墙联动后有何优势？' },
+            { q: '问题4', desc: 'ACL与IPS的配合使用应注意哪些问题？' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及防火墙双机部署、负载均衡关键因素、IPS七元组、态势感知平台功能等知识点。'
+        },
+        {
+          id: 'case_2024_3',
+          num: '第三题',
+          title: '传输网络规划与设计',
+          tags: ['SDH', 'MSTP', 'OTN'],
+          content: '某城市政务网络采用SDH/MSTP光传输组网，新建OTN骨干网络承载综合业务。SDH/MSTP网络与OTN网络采用不同技术体制，两者如何配合？',
+          subQuestions: [
+            { q: '问题1', desc: '请给出通道保护环与复用段保护环的主要区别' },
+            { q: '问题2', desc: '请说明SDH/MSTP与OTN网络配合时应考虑哪些因素' },
+            { q: '问题3', desc: '请比较ODU0、ODU1、ODU2、ODU4的容量差异' },
+            { q: '问题4', desc: '请说明OTN网络帯宽相对于SDH网络的优势' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及SDH/MSTP/OTN技术、通道保护与复用段保护、ODU容量对比等知识点。'
+        },
+        {
+          id: 'case_2024_4',
+          num: '第四题',
+          title: '网络存储与计算平台设计',
+          tags: ['DAS', 'NAS', 'SAN'],
+          content: '某单位新建数据中心需部署存储系统，包括数据库、文件共享、备份存档等业务。考虑数据安全性和业务连续性要求。',
+          subQuestions: [
+            { q: '问题1', desc: '请比较DAS、NAS、SAN三种存储架构的特点及适用场景' },
+            { q: '问题2', desc: '请给出存储系统喃机应考虑的关键指标' },
+            { q: '问题3', desc: '请说明分布式存储相对于传统存储的优势' },
+            { q: '问题4', desc: '请给出数据备份策略应考虑的因素' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及存储架构对比、存储系统指标、分布式存储、数据备份策略等知识点。'
+        },
+        {
+          id: 'case_2024_5',
+          num: '第五题',
+          title: '网络故障诊断与排除',
+          tags: ['故障分析', 'TCP重传', '预防措施'],
+          content: '某企业网络运行过程中出现以下故障现象：用户反映访问特定服务器时延明显增大，使用ping命令和traceroute工具检测发现存在丢包和重传现象。',
+          subQuestions: [
+            { q: '问题1', desc: '请分析可能导致TCP重传的原因' },
+            { q: '问题2', desc: '请给出TCP重传的排查思路' },
+            { q: '问题3', desc: '请说明网络质量监控应采用的指标及方法' },
+            { q: '问题4', desc: '请给出预防网络故障的措施' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及TCP重传原因分析、故障排查思路、网络监控指标、故障预防措施等知识点。'
+        }
+      ],
+      '2023': [
+        {
+          id: 'case_2023_1',
+          num: '第一题',
+          title: '网络系统规划设计与优化',
+          tags: ['网络架构', '子网划分'],
+          content: '某企业因业务发展需要，新建办公楼网络接入生产数据acenter，要求实现生产网和办公网物理隔离，采用模块化两层网络架构。',
+          subQuestions: [
+            { q: '问题1', desc: '请给出该网络的总体架构设计' },
+            { q: '问题2', desc: '请说明生产网与办公网隔离的实现方式' },
+            { q: '问题3', desc: '请给出核心交换机选型的关键指标' },
+            { q: '问题4', desc: '请说明弱间布线实施规范' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及企业网络架构设计、网络隔离方式、交换机选型等知识点。'
+        },
+        {
+          id: 'case_2023_2',
+          num: '第二题',
+          title: '网络安全防护方案设计',
+          tags: ['防火墙', 'VPN', 'ACL'],
+          content: '某集团公司因业务发展需要建立覆盖全国范围的专网，采用MPLS VPN组网，各子公司需通过Internet安全接入集团网络。',
+          subQuestions: [
+            { q: '问题1', desc: '请说明MPLS VPN的工作原理' },
+            { q: '问题2', desc: '请给出Internet接入的安全防护方案' },
+            { q: '问题3', desc: '请说明SSL VPN与IPSec VPN的区别' },
+            { q: '问题4', desc: '请给出ACL与防火墙配台使用的建议' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及MPLS VPN、VPN安全接入、ACL配置等知识点。'
+        },
+        {
+          id: 'case_2023_3',
+          num: '第三题',
+          title: '传输网络规划与设计',
+          tags: ['SDH', 'OTN', 'DWDM'],
+          content: '某省政务网络采用DWDM波分复用技术构建骨干传输网，新建OTN网络需与原有SDH网络对接。',
+          subQuestions: [
+            { q: '问题1', desc: '请比较DWDM与OTN的技术特点' },
+            { q: '问题2', desc: '请说明SDH与OTN网络对接应注意的问题' },
+            { q: '问题3', desc: '请给出光纤选用建议' },
+            { q: '问题4', desc: '请说明光缆线路保护方式' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及DWDM/OTN技术对比、SDH与OTN对接、光纤选用等知识点。'
+        },
+        {
+          id: 'case_2023_4',
+          num: '第四题',
+          title: '网络存储与计算平台设计',
+          tags: ['存储架构', '备份策略'],
+          content: '某医疗机构新建数据中心，部署核心业务系统包括HIS、LIS、PACS等，医疗数据安全性要求高，业务中断影响严重。',
+          subQuestions: [
+            { q: '问题1', desc: '请分析医疗行业数据存储需求' },
+            { q: '问题2', desc: '请给出存储系统架构设计方案' },
+            { q: '问题3', desc: '请说明数据备份和容灰方案' },
+            { q: '问题4', desc: '请给出数据归档策略' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及医疗行业存储需求、存储架构设计、数据备份容灰等知识点。'
+        },
+        {
+          id: 'case_2023_5',
+          num: '第五题',
+          title: '网络故障诊断与排除',
+          tags: ['故障排查', '性能优化'],
+          content: '某企业网络在高峰期出现访问缓慢的问题，部分业务系统响应时间明显增加，用户体验下降。',
+          subQuestions: [
+            { q: '问题1', desc: '请分析可能导致网络延迟的原因' },
+            { q: '问题2', desc: '请给出网络性能优化的思路' },
+            { q: '问题3', desc: '请说明QoS配置方法' },
+            { q: '问题4', desc: '请给出网络扩容建议' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及网络延迟分析、性能优化、QoS配置等知识点。'
+        }
+      ],
+      '2022': [
+        {
+          id: 'case_2022_1',
+          num: '第一题',
+          title: '网络系统规划设计与优化',
+          tags: ['网络架构', '冗余设计'],
+          content: '某企业为提高网络可靠性，计划对现有网络进行升级改造。采用双核心架构，核心层与汇聚层之间采用双归属连接。',
+          subQuestions: [
+            { q: '问题1', desc: '请说明双核心架构的设计要点' },
+            { q: '问题2', desc: '请给出链路聚合的实现方式' },
+            { q: '问题3', desc: '请说明VRRP协议的工作原理' },
+            { q: '问题4', desc: '请给出网络可靠性的评估指标' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及双核心架构、链路聚合、VRRP、可靠性指标等知识点。'
+        },
+        {
+          id: 'case_2022_2',
+          num: '第二题',
+          title: '网络安全防护方案设计',
+          tags: ['防火墙', 'IDS', 'WAF'],
+          content: '某电商平台面临网络安全威胁，需设计完整的安全防护体系。包括WEB应用防护、入侵检测、安全审计等方面。',
+          subQuestions: [
+            { q: '问题1', desc: '请给出WAF的工作原理和部署方式' },
+            { q: '问题2', desc: '请说明IDS与IPS的区别' },
+            { q: '问题3', desc: '请给出安全审计系统的建设要点' },
+            { q: '问题4', desc: '请说明DDOS攻击防护策略' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及WAF、IDS/IPS、安全审计、DDoS防护等知识点。'
+        },
+        {
+          id: 'case_2022_3',
+          num: '第三题',
+          title: '传输网络规划与设计',
+          tags: ['SDH', 'MSTP', 'OTN'],
+          content: '某市级政务网络采用MSTP技术构建传输网，现需升级扩容以满足业务增长需求。',
+          subQuestions: [
+            { q: '问题1', desc: '请说明MSTP的技术特点' },
+            { q: '问题2', desc: '请给出网络扩容方案' },
+            { q: '问题3', desc: '请说明SDH帧结构' },
+            { q: '问题4', desc: '请给出传输网络保护方式' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及MSTP特点、扩容方案、SDH帧结构、保护方式等知识点。'
+        },
+        {
+          id: 'case_2022_4',
+          num: '第四题',
+          title: '网络存储与计算平台设计',
+          tags: ['SAN', '存储备份'],
+          content: '某企业数据中心需建设存储系统，要求支持数据库、虚拟化等核心业务，数据安全性高。',
+          subQuestions: [
+            { q: '问题1', desc: '请比较FC-SAN与IP-SAN的优缺点' },
+            { q: '问题2', desc: '请给出存储系统架构设计' },
+            { q: '问题3', desc: '请说明存储虚拟化技术' },
+            { q: '问题4', desc: '请给出数据备份策略' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及FC-SAN与IP-SAN对比、存储虚拟化、数据备份策略等知识点。'
+        },
+        {
+          id: 'case_2022_5',
+          num: '第五题',
+          title: '网络故障诊断与排除',
+          tags: ['故障排查', '工具使用'],
+          content: '某企业网络出现全网瘫痪故障，技术人员需快速定位故障点并恢复业务。',
+          subQuestions: [
+            { q: '问题1', desc: '请给出故障排查的基本思路' },
+            { q: '问题2', desc: '请说明常用故障排查工具' },
+            { q: '问题3', desc: '请分析可能导致全网瘫痪的原因' },
+            { q: '问题4', desc: '请给出预防全网瘫痪的措施' }
+          ],
+          answer: '暂无',
+          explanation: '本题涉及故障排查思路、排查工具、故障原因分析、预防措施等知识点。'
+        }
+      ]
+    };
+
+    let currentYear = '2024';
+    let currentQuestionIndex = 0;
+    let userAnswers = {};
+
+    function renderQuestionList() {
+      const container = document.getElementById('questionList');
+      const questions = caseData[currentYear] || [];
+
+      if (questions.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">📚</div>
+            <p>暂无${currentYear}年真题</p>
+          </div>
+        `;
+        document.getElementById('navButtons').style.display = 'none';
+        return;
+      }
+
+      const q = questions[currentQuestionIndex];
+
+      container.innerHTML = `
+        <div class="question-card">
+          <div class="question-header">
+            <span class="question-num">${q.num}：${q.title}</span>
+            <div class="question-tags">
+              ${q.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
+          </div>
+
+          <div class="question-content">
+            <p>${q.content}</p>
+          </div>
+
+          <div class="sub-questions">
+            ${q.subQuestions.map((sq, idx) => `
+              <div class="sub-q">
+                <div class="sub-q-title">${sq.q}（${(idx + 1)}/${q.subQuestions.length}）</div>
+                <div class="sub-q-content">${sq.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="answer-section">
+            <h3>📝 我的答案</h3>
+            <textarea class="answer-textarea" id="answerInput" placeholder="请输入您的答案...">${userAnswers[q.id] || ''}</textarea>
+            <button class="btn btn-primary" onclick="checkAnswer()">提交答案</button>
+          </div>
+
+          <div class="result-section" id="resultSection">
+            <div class="result-answer">参考答案：</div>
+            <div class="result-explanation"></div>
+          </div>
+          <div class="save-success" id="saveSuccess">✓ 答案已保存</div>
+        </div>
+      `;
+
+      document.getElementById('navButtons').style.display = 'flex';
+      updateNavButtons();
+    }
+
+    function updateNavButtons() {
+      const questions = caseData[currentYear] || [];
+      document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+      document.getElementById('nextBtn').disabled = currentQuestionIndex >= questions.length - 1;
+    }
+
+    function checkAnswer() {
+      const questions = caseData[currentYear];
+      const q = questions[currentQuestionIndex];
+      const input = document.getElementById('answerInput');
+      const answerText = input.value;
+      userAnswers[q.id] = answerText;
+
+      // 保存到数据库
+      fetch(`${API_BASE}/case/submit`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          question_id: q.id,
+          year: parseInt(currentYear),
+          sub_question: '全部',
+          user_answer: answerText
+        })
+      }).then(res => res.json())
+        .then(data => {
+          const saveSuccess = document.getElementById('saveSuccess');
+          if (data.status === 'saved') {
+            saveSuccess.textContent = '✓ 答案已保存到数据库';
+          } else {
+            saveSuccess.textContent = '✓ 答案已保存';
+          }
+          saveSuccess.classList.add('show');
+          setTimeout(() => saveSuccess.classList.remove('show'), 3000);
+        })
+        .catch(err => {
+          console.error('保存失败:', err);
+        });
+
+      const resultSection = document.getElementById('resultSection');
+      resultSection.classList.add('show');
+      resultSection.querySelector('.result-answer').textContent = '参考答案：' + q.answer;
+      resultSection.querySelector('.result-explanation').innerHTML = q.explanation;
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 年份切换
+      document.querySelectorAll('.year-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.year-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentYear = tab.dataset.year;
+          currentQuestionIndex = 0;
+          userAnswers = {};
+          renderQuestionList();
+        });
+      });
+
+      // 导航按钮
+      document.getElementById('prevBtn').addEventListener('click', () => {
+        if (currentQuestionIndex > 0) {
+          currentQuestionIndex--;
+          renderQuestionList();
+        }
+      });
+
+      document.getElementById('nextBtn').addEventListener('click', () => {
+        const questions = caseData[currentYear] || [];
+        if (currentQuestionIndex < questions.length - 1) {
+          currentQuestionIndex++;
+          renderQuestionList();
+        }
+      });
+
+      renderQuestionList();
+    });
+  </script>
+</body>
+</html>
