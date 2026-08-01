@@ -14,3 +14,10 @@ data/exam.db
 # Virtual environment (if any)
 venv/
 *.venv/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example

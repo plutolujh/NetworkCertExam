@@ -1,0 +1,9 @@
+name = "networkcert-api"
+main = "api-worker.js"
+compatibility_date = "2024-01-01"
+account_id = "ab574da844c911d7fa11c708f29e237e"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "networkcert-daily"
+database_id = "d932e501-8d69-423e-a6a8-86b9f2b3ae74"

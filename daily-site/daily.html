@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=3.0, user-scalable=yes">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>每日一题 - 网络规划师备考</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --error: #dc2626;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header a {
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-block;
+      margin-bottom: 0.25rem;
+    }
+    header h1 { font-size: 1.1rem; font-weight: 600; }
+    header .date { font-size: 0.8rem; opacity: 0.9; margin-top: 0.25rem; }
+
+    main { max-width: 680px; margin: 0 auto; padding: 1rem; }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin: 1.5rem 0 0.75rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 0.25rem;
+    }
+
+    .question-type {
+      display: inline-block;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      margin-bottom: 0.5rem;
+    }
+    .question-source {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      background: #f1f5f9;
+      border-radius: 4px;
+      display: inline-block;
+    }
+    .question-content {
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1rem;
+    }
+    .option-item {
+      display: flex;
+      align-items: flex-start;
+      padding: 0.875rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .option-item:hover {
+      border-color: var(--primary);
+      background: #f0f7ff;
+    }
+    .option-item.selected {
+      border-color: var(--primary);
+      background: #dbeafe;
+    }
+    .option-item.correct {
+      border-color: var(--success);
+      background: #dcfce7;
+    }
+    .option-item.wrong {
+      border-color: var(--error);
+      background: #fee2e2;
+    }
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--border);
+      border-radius: 50%;
+      font-weight: bold;
+      margin-right: 0.75rem;
+      flex-shrink: 0;
+    }
+    .option-text { flex: 1; font-size: 0.95rem; }
+
+    .btn {
+      display: inline-block;
+      background: var(--primary);
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
+      text-align: center;
+      font-size: 1rem;
+    }
+    .btn-secondary { background: var(--text-secondary); }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-items: center;
+      width: 100%;
+    }
+    .btn-group .btn { margin: 0; }
+
+    .answer-section {
+      background: #fef3c7;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .answer-section h4 {
+      color: #92400e;
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+    .answer-result {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px dashed #d97706;
+      margin-bottom: 0.75rem;
+    }
+    .answer-result span { font-size: 0.9rem; }
+    .answer-result .yours { color: #059669; }
+    .answer-result .correct { color: #dc2626; }
+    .explanation {
+      background: #f0f7ff;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 0.75rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      animation: slideUp 0.3s ease 0.1s both;
+    }
+    .explanation strong { color: var(--primary); }
+
+    .knowledge-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    .knowledge-card h2 {
+      color: var(--primary);
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    .knowledge-item {
+      background: #f0f7ff;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.75rem;
+    }
+    .knowledge-item strong {
+      color: var(--primary);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    .knowledge-item p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.5rem;
+    }
+    .mnemonic {
+      background: #fef3c7;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+    .version-info {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .version-info p {
+      font-size: 0.75rem;
+      margin: 0.25rem 0;
+    }
+    .changelog {
+      font-size: 0.7rem !important;
+      opacity: 0.8;
+    }
+
+    .loading { text-align: center; padding: 2rem; color: var(--text-secondary); }
+    .error { background: #fee2e2; color: #dc2626; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+
+    @media (max-width: 480px) {
+      .stats-grid { gap: 0.5rem; }
+      .stat-item { padding: 0.75rem 0.5rem; }
+      .stat-value { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html">← 返回首页</a>
+    <h1>🎯 每日一题</h1>
+    <div class="date" id="currentDate"></div>
+  </header>
+
+  <main>
+    <!-- 学习统计 -->
+    <div class="card">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value" id="stat-total">--</div>
+          <div class="stat-label">题库总数</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-answered">--</div>
+          <div class="stat-label">已答题</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="stat-accuracy">--%</div>
+          <div class="stat-label">正确率</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 题目区域 -->
+    <div class="section-title">📝 题目练习</div>
+    <div class="card" id="questionCard">
+      <div class="loading">加载题目中...</div>
+    </div>
+
+    <!-- 答题结果 -->
+    <div id="answerSection" style="display: none;"></div>
+
+    <!-- 知识点速记 -->
+    <div class="section-title">📖 知识点速记</div>
+    <div class="card" id="knowledgeCard">
+      <div class="loading">加载中...</div>
+    </div>
+
+    <div class="footer">
+      <p>距离考试还有 <span id="daysLeft" style="font-weight: bold; color: var(--primary);">--</span> 天</p>
+      <div class="version-info">
+        <p>v1.0.2 | 2026-05-31</p>
+        <p class="changelog">新增：案例分析专项页面（2022-2024年真题）</p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const API_BASE = 'https://networkcert-daily.plutolu.workers.dev/api';
+    let currentQuestion = null;
+    let selectedAnswers = [];
+
+    async function init() {
+      document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
+        year: 'numeric', month: 'long', day: 'numeric', weekday: 'long'
+      });
+
+      const examDate = new Date('2026-11-14');
+      const daysLeft = Math.ceil((examDate - new Date()) / (1000 * 60 * 60 * 24));
+      document.getElementById('daysLeft').textContent = daysLeft;
+
+      await loadStats();
+      await loadDailyQuestion();
+      await loadKnowledge();
+    }
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_BASE}/stats`);
+        const data = await res.json();
+        document.getElementById('stat-total').textContent = data.total || 0;
+        document.getElementById('stat-answered').textContent = data.answered || 0;
+        document.getElementById('stat-accuracy').textContent = (data.accuracy || 0) + '%';
+      } catch (e) {
+        console.error('加载统计失败', e);
+      }
+    }
+
+    async function loadDailyQuestion() {
+      try {
+        const res = await fetch(`${API_BASE}/question/random`);
+        const data = await res.json();
+        currentQuestion = data;
+        selectedAnswers = [];
+        document.getElementById('answerSection').innerHTML = '';
+        document.getElementById('answerSection').style.display = 'none';
+        renderQuestion(data);
+      } catch (e) {
+        document.getElementById('questionCard').innerHTML = '<div class="error">加载失败，请稍后重试</div>';
+      }
+    }
+
+    function renderQuestion(q) {
+      const typeMap = { single: '单选题', multi: '多选题', judge: '判断题' };
+      const typeName = typeMap[q.type] || '单选题';
+
+      let options = [];
+      try {
+        options = JSON.parse(q.options);
+      } catch (e) {
+        options = [];
+      }
+
+      const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+      const optionsHtml = options.map((opt, idx) => `
+        <div class="option-item" data-index="${idx}" onclick="selectOption(${idx})">
+          <div class="option-letter">${letters[idx]}</div>
+          <div class="option-text">${opt}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('questionCard').innerHTML = `
+        <span class="question-type">${typeName}</span>
+        <div class="question-source">📅 ${q.year || ''} ${q.category || ''}</div>
+        <div class="question-content">${q.content}</div>
+        <div class="options-list">${optionsHtml}</div>
+        <div class="btn-group">
+          <button class="btn" onclick="submitAnswer()" id="submitBtn" disabled>提交答案</button>
+          <button class="btn btn-secondary" onclick="loadDailyQuestion()">换一题</button>
+        </div>
+      `;
+    }
+
+    function selectOption(idx) {
+      const q = currentQuestion;
+      if (q.type === 'single' || q.type === 'judge') {
+        selectedAnswers = [idx];
+        document.querySelectorAll('.option-item').forEach((el, i) => {
+          el.classList.toggle('selected', i === idx);
+        });
+      } else {
+        const pos = selectedAnswers.indexOf(idx);
+        if (pos === -1) {
+          selectedAnswers.push(idx);
+        } else {
+          selectedAnswers.splice(pos, 1);
+        }
+        document.querySelectorAll('.option-item').forEach((el, i) => {
+          el.classList.toggle('selected', selectedAnswers.includes(i));
+        });
+      }
+      document.getElementById('submitBtn').disabled = selectedAnswers.length === 0;
+    }
+
+    async function submitAnswer() {
+      if (!currentQuestion || selectedAnswers.length === 0) return;
+
+      let isCorrect = false;
+      let correctAnswer = null;
+
+      document.querySelectorAll('.option-item').forEach((el, i) => {
+        el.classList.toggle('selected', selectedAnswers.includes(i));
+      });
+
+      let explanation = '';
+      try {
+        const res = await fetch(`${API_BASE}/question/submit`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question_id: currentQuestion.id,
+            user_answer: selectedAnswers.join(','),
+            is_correct: false
+          })
+        });
+        const data = await res.json();
+
+        if (data.answer) {
+          correctAnswer = data.answer;
+          const answerMap = { 'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7 };
+          const correctIndices = correctAnswer.split(',').map(a => answerMap[a.trim()] ?? -1).filter(i => i >= 0);
+
+          isCorrect = correctIndices.length === selectedAnswers.length &&
+                      correctIndices.every(c => selectedAnswers.includes(c));
+
+          document.querySelectorAll('.option-item').forEach((el, i) => {
+            if (correctIndices.includes(i)) {
+              el.classList.add('correct');
+            } else if (selectedAnswers.includes(i) && !isCorrect) {
+              el.classList.add('wrong');
+            }
+          });
+        }
+
+        explanation = data.explanation || '';
+        await loadStats();
+      } catch (e) {
+        console.error('提交失败', e);
+      }
+
+      const answerLetters = selectedAnswers.map(i => ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'][i]).join(',');
+      const correctLetters = correctAnswer ? correctAnswer : '?';
+
+      document.getElementById('answerSection').innerHTML = `
+        <div class="answer-section">
+          <h4>${isCorrect ? '✅ 回答正确！' : '❌ 回答错误'}</h4>
+          <div class="answer-result">
+            <span>你的答案: <b class="yours">${answerLetters}</b></span>
+            <span>正确答案: <b class="correct">${correctLetters}</b></span>
+          </div>
+        </div>
+        ${explanation ? `
+        <div class="explanation">
+          <strong>📝 解析：</strong>${explanation}
+        </div>
+        ` : ''}
+      `;
+      document.getElementById('answerSection').style.display = 'block';
+
+      if (correctAnswer) {
+        try {
+          await fetch(`${API_BASE}/question/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              question_id: currentQuestion.id,
+              user_answer: selectedAnswers.join(','),
+              is_correct: isCorrect
+            })
+          });
+        } catch (e) {
+          console.error('更新失败', e);
+        }
+      }
+    }
+
+    async function loadKnowledge() {
+      const tags = ['TCP三次握手', 'VLAN', 'STP', '子网掩码', 'OSPF', 'NAT', 'ACL'];
+      const randomTag = tags[Math.floor(Math.random() * tags.length)];
+
+      const knowledgeData = {
+        'TCP三次握手': {
+          principle: '三次握手建立TCP连接',
+          steps: ['客户端发送SYN=x', '服务器返回SYN+ACK=y, ack=x+1', '客户端发送ACK=x+1, ack=y+1'],
+          mnemonic: '主动方先SYN，被动方SYN+ACK，然后ACK确认'
+        },
+        'VLAN': {
+          principle: '隔离广播域，划分逻辑网络',
+          types: '基于端口(最常用)、基于MAC、基于协议、基于IP子网',
+          trunk: '802.1Q打标签，4字节',
+          mnemonic: 'VLAN隔离广播，Trunk承载多VLAN'
+        },
+        'STP': {
+          principle: '生成树协议，消除环路',
+          states: 'Blocking→Listening→Learning→Forwarding',
+          roles: '根桥、根端口、指定端口、非指定端口',
+          mnemonic: '先选根桥，再定端口角色'
+        },
+        '子网掩码': {
+          principle: '区分网络号和主机号',
+          formula: '网络号 = IP AND 掩码',
+          broadcast: '广播地址 = 网络号 OR (~掩码)',
+          mnemonic: '网络AND掩码得网络，取反AND得主机'
+        },
+        'OSPF': {
+          principle: '链路状态路由协议',
+          areas: '骨干区域Area 0，非骨干区域需挂靠Area 0',
+          routerid: '手动指定或选最大环回口IP',
+          mnemonic: 'OSPF用链路状态，RIP用距离矢量'
+        },
+        'NAT': {
+          principle: '网络地址转换，私网转公网',
+          types: '静态NAT、动态NAT、PAT(端口复用)',
+          mnemonic: '内网IP转公网，PAT最常用'
+        },
+        'ACL': {
+          principle: '访问控制列表，过滤流量',
+          types: '标准ACL(1-99)、扩展ACL(100-199)',
+          placement: '标准ACL靠近目标，扩展ACL靠近源',
+          mnemonic: 'ACL过滤流量，标准看源，扩展看源目'
+        }
+      };
+
+      const k = knowledgeData[randomTag] || knowledgeData['TCP三次握手'];
+
+      document.getElementById('knowledgeCard').innerHTML = `
+        <h2 style="color: var(--primary); margin-bottom: 1rem;">📌 ${randomTag}</h2>
+        <div class="knowledge-item">
+          <strong>核心原理：</strong>
+          <p>${k.principle}</p>
+          ${k.steps ? `<p><strong>步骤：</strong>${k.steps.join(' → ')}</p>` : ''}
+          ${k.types ? `<p><strong>类型：</strong>${k.types}</p>` : ''}
+          ${k.states ? `<p><strong>状态：</strong>${k.states}</p>` : ''}
+          ${k.formula ? `<p><strong>公式：</strong>${k.formula}</p>` : ''}
+          <div class="mnemonic">
+            <strong>💡 口诀：</strong>${k.mnemonic}
+          </div>
+        </div>
+      `;
+    }
+
+    init();
+  </script>
+</body>
+</html>
